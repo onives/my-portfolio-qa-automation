@@ -1,12 +1,13 @@
 from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 import pdb
 import time
 import unittest
 
 
-class MyPortfolioTestScript(unittest.TestCase):
+class MyProjectsPageTest(unittest.TestCase):
 
     def setUp(self) -> None:
         self.driver = webdriver.Firefox()
@@ -21,16 +22,23 @@ class MyPortfolioTestScript(unittest.TestCase):
 
         # navigate to the projects page
         projects_button_locator = '//*[@id="responsive-navbar-nav"]/div/a[2]'
-        projects_element = self.driver.find_element(By.XPATH, projects_button_locator)
-        projects_element.click()
+        projects_button_elem = self.driver.find_element(By.XPATH, projects_button_locator)
+        projects_button_elem.click()
 
         # verify the url of the current page
         expected_url = "https://nameere-olive-nives.netlify.app/projects"
         current_url = self.driver.current_url
         self.assertEqual(expected_url, current_url, f"Got wrong site url. Current url : {current_url}")
 
-        # identify project element by xpath
-        # verify its displayed
+        # verify project element is displayed
+        project_locator_xpath = '//*[@id="root"]/div/div[1]/div[2]/div/div[1]'
+        try:
+            project_element = WebDriverWait(self.driver, 10).until(
+                EC.visibility_of_element_located((By.XPATH, project_locator_xpath))
+            )
+            self.assertTrue(project_element.is_displayed())
+        finally:
+            pass
         # pdb.set_trace()
 
     def tearDown(self) -> None:
